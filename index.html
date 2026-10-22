@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresiasi & Kritik Seni Rupa Kelas X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        art: {
+                            dark: '#0F172A',
+                            primary: '#4338CA',
+                            accent: '#D97706',
+                            gold: '#F59E0B',
+                            bg: '#F8FAFC',
+                            card: '#FFFFFF'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .tab-btn.active {
+            background-color: #4338CA;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+        }
+        canvas {
+            touch-action: none;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <header id="main-header" class="bg-slate-900 text-white sticky top-0 z-50 border-b border-slate-800 shadow-lg hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('dashboard')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i class="fa-solid font-serif">S</i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg leading-tight tracking-wide font-serif">ART-EDU X</h1>
+                    <p class="text-xs text-amber-400 font-medium">Apresiasi & Kritik Seni Rupa</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p id="user-display-name" class="text-sm font-semibold text-slate-200">Siswa</p>
+                    <span id="user-role-badge" class="inline-block px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold bg-indigo-900/80 text-indigo-300 rounded-full border border-indigo-700">Siswa</span>
+                </div>
+                <button onclick="handleLogout()" class="px-3 py-1.5 text-sm bg-slate-800 hover:bg-rose-600/20 hover:text-rose-400 hover:border-rose-500/50 text-slate-300 border border-slate-700 rounded-lg transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="hidden sm:inline">Keluar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- ==================== PAGE 1: LOGIN ==================== -->
+        <section id="page-login" class="fade-in max-w-md mx-auto py-8">
+            <div class="text-center mb-8">
+                <div class="inline-flex p-3 rounded-2xl bg-indigo-600/10 text-indigo-600 mb-3 border border-indigo-100">
+                    <i class="fa-solid fa-palette text-4xl"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-slate-900 font-serif tracking-tight">Seni Rupa Kelas X</h2>
+                <p class="text-slate-500 mt-2 text-sm">Media Pembelajaran Interaktif Apresiasi & Kritik Seni</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-amber-500"></div>
+
+                <!-- Role Switcher -->
+                <div class="flex bg-slate-100 p-1 rounded-xl mb-6 border border-slate-200">
+                    <button type="button" id="role-btn-siswa" onclick="setRole('siswa')" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all text-slate-700 bg-white shadow-sm">
+                        <i class="fa-solid fa-user-graduate mr-2"></i>Siswa
+                    </button>
+                    <button type="button" id="role-btn-guru" onclick="setRole('guru')" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all text-slate-500 hover:text-slate-700">
+                        <i class="fa-solid fa-chalkboard-user mr-2"></i>Guru
+                    </button>
+                </div>
+
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Username</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" id="login-username" required class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none text-slate-800 font-medium" placeholder="Masukkan username">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                <i class="fa-solid fa-key"></i>
+                            </span>
+                            <input type="password" id="login-password" required class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none text-slate-800 font-medium" placeholder="Masukkan password">
+                        </div>
+                    </div>
+
+                    <div id="login-error" class="hidden p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-medium flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-sm"></i>
+                        <span>Username atau password salah!</span>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all active:scale-[0.98]">
+                        Masuk ke Pembelajaran <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </form>
+
+                <!-- Information Credentials Box -->
+                <div class="mt-6 pt-5 border-t border-slate-100 bg-amber-50/60 -mx-6 -mb-6 p-4 border-b rounded-b-2xl">
+                    <p class="text-xs font-bold text-amber-800 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info"></i> Akun Uji Coba Tersedia:
+                    </p>
+                    <div class="text-xs text-amber-900/80 space-y-1 font-mono">
+                        <p><span class="font-semibold text-slate-700">Siswa:</span> username: <span class="bg-amber-100 px-1 rounded">siswa10</span> | pass: <span class="bg-amber-100 px-1 rounded">123</span></p>
+                        <p><span class="font-semibold text-slate-700">Guru:</span> username: <span class="bg-amber-100 px-1 rounded">guru10</span> | pass: <span class="bg-amber-100 px-1 rounded">321</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PAGE 2: DASHBOARD ==================== -->
+        <section id="page-dashboard" class="fade-in hidden space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-10 text-white overflow-hidden shadow-2xl border border-slate-800">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="px-3 py-1 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-full border border-amber-500/30 uppercase tracking-widest">Kurikulum Merdeka / SMA Kelas X</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-3 font-serif leading-tight">Eksplorasi Dunia Seni Rupa Nusantara & Modern</h2>
+                    <p class="text-slate-300 mt-2 text-sm sm:text-base">Pelajari konsep apresiasi karya seni rupa serta kuasai metode kritik seni secara analitis dan komunikatif.</p>
+                </div>
+            </div>
+
+            <!-- Main Menu Grid -->
+            <div>
+                <h3 class="text-xl font-bold text-slate-800 font-serif mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-indigo-600"></i> Menu Utama Pembelajaran
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Card 1: Materi Apresiasi -->
+                    <div onclick="navigateTo('materi-apresiasi')" class="group bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                <i class="fa-solid fa-eye"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">Bab 1: Apresiasi Seni Rupa</h4>
+                            <p class="text-slate-500 text-sm leading-relaxed">Memahami konsep, tingkat penilaian (empati, estetis, kritis), jenis karya seni 2D/3D, dan fungsi seni.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-indigo-600 text-sm font-bold gap-2">
+                            <span>Mulai Belajar</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Materi Kritik -->
+                    <div onclick="navigateTo('materi-kritik')" class="group bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all">
+                                <i class="fa-solid fa-comments"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">Bab 2: Kritik Seni Rupa</h4>
+                            <p class="text-slate-500 text-sm leading-relaxed">Tahapan kritik seni: Deskripsi, Analisis Formal, Interpretasi, dan Evaluasi/Penyimpulan karya.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-amber-600 text-sm font-bold gap-2">
+                            <span>Pelajari Tahapan</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Kuis Interaktif -->
+                    <div onclick="navigateTo('kuis')" class="group bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors">Kuis & Uji Pemahaman</h4>
+                            <p class="text-slate-500 text-sm leading-relaxed">Uji pemahaman Anda tentang konsep apresiasi dan tahapan kritik seni rupa melalui 5 soal pilihan ganda.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-emerald-600 text-sm font-bold gap-2">
+                            <span>Kerjakan Kuis</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Studio Kanvas Interaktif -->
+                    <div onclick="navigateTo('materi-studio')" class="group bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 group-hover:bg-purple-600 group-hover:text-white transition-all">
+                                <i class="fa-solid fa-paintbrush"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-purple-600 transition-colors">Studio Lukis Interaktif</h4>
+                            <p class="text-slate-500 text-sm leading-relaxed">Laboratorium animasi visual interaktif untuk mempraktikkan eksperimen warna, garis, dan unsur seni rupa.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-purple-600 text-sm font-bold gap-2">
+                            <span>Buka Studio</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 (Guru Only): Rekap Nilai -->
+                    <div id="card-menu-guru" onclick="navigateTo('rekap-nilai')" class="group bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-6 border border-indigo-700/50 shadow-md hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between hidden">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl font-bold mb-4 group-hover:scale-110 transition-all border border-amber-500/30">
+                                <i class="fa-solid fa-clipboard-user"></i>
+                            </div>
+                            <span class="text-[10px] uppercase tracking-wider font-bold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">Khusus Guru</span>
+                            <h4 class="text-lg font-bold mt-2 mb-2 text-white">Rekap Nilai Siswa</h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">Lihat daftar nilai kuis seluruh siswa yang telah selesai dikerjakan beserta opsi kelola data.</p>
+                        </div>
+                        <div class="mt-6 flex items-center text-amber-400 text-sm font-bold gap-2">
+                            <span>Buka Rekapitulasi</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div id="subpage-nav" class="hidden mb-6 flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+            <button onclick="navigateTo('dashboard')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
+                <i class="fa-solid fa-house"></i>
+                <span>Kembali ke Menu Utama</span>
+            </button>
+            <span id="subpage-title" class="text-sm font-bold text-slate-500 hidden sm:inline">Modul Pembelajaran</span>
+        </div>
+
+        <!-- ==================== PAGE 3: MATERI APRESIASI ==================== -->
+        <section id="page-materi-apresiasi" class="fade-in hidden space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                <div class="border-b border-slate-100 pb-4 mb-6">
+                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Bab 1 - Modul Utama</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-serif">Apresiasi Seni Rupa</h2>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Text Content -->
+                    <div class="lg:col-span-2 space-y-6 text-slate-600 text-sm sm:text-base leading-relaxed">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2 font-serif flex items-center gap-2">
+                                <i class="fa-solid fa-bookmark text-indigo-600"></i> Pengertian Apresiasi Seni
+                            </h3>
+                            <p> secara etimologi berasal dari bahasa Latin <i>Apreciatio</i> yang berarti menilai atau menghargai. Apresiasi Seni Rupa adalah kegiatan mengenali, mengamati, memahami, menghargai, dan menilai nilai-nilai estetis serta pesan simbolis yang terkandung dalam karya seni rupa.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2 font-serif flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group text-indigo-600"></i> Tingkatan Dalam Apresiasi Seni
+                            </h3>
+                            <ul class="space-y-2 list-disc list-inside">
+                                <li><strong class="text-slate-800">Apresiasi Empatik:</strong> Penilaian kualitatif yang didasarkan pada tangkapan indrawi/perasaan secara langsung.</li>
+                                <li><strong class="text-slate-800">Apresiasi Estetis:</strong> Penilaian keindahan karya yang melibatkan pengamatan mendalam mengenai unsur dan prinsip seni rupa.</li>
+                                <li><strong class="text-slate-800">Apresiasi Kritis:</strong> Penilaian ilmiah dan objektif yang melibatkan analisa, interpretasi, dan evaluasi profesional.</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2 font-serif flex items-center gap-2">
+                                <i class="fa-solid fa-shapes text-indigo-600"></i> Unsur-Unsur Seni Rupa
+                            </h3>
+                            <p class="mb-2">Karya seni rupa dibentuk oleh unsur visual dasar: <strong>Garis, Bidang, Bentuk, Tekstur, Warna, Ruang, dan Gelap-Terang</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-xl flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-amber-400 font-serif mb-1 flex items-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Simulasi pencahayaan & Nilai Warna
+                            </h4>
+                            <p class="text-xs text-slate-400 mb-4">Geser kontrol di bawah untuk mempelajari pengaruh efek pencahayaan pada nilai keindahan karya seni.</p>
+
+                            <!-- Canvas Display -->
+                            <div class="bg-black rounded-xl overflow-hidden mb-4 border border-slate-700 relative">
+                                <canvas id="canvas-apresiasi" width="300" height="200" class="w-full h-auto block"></canvas>
+                            </div>
+
+                            <!-- Interactive Controls -->
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <label class="flex justify-between font-medium text-slate-300 mb-1">
+                                        <span>Intensitas Cahaya (Light Position)</span>
+                                        <span id="val-light">50%</span>
+                                    </label>
+                                    <input type="range" id="slider-light" min="0" max="100" value="50" class="w-full accent-amber-500 cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="flex justify-between font-medium text-slate-300 mb-1">
+                                        <span>Saturasi Warna (Color Saturation)</span>
+                                        <span id="val-sat">70%</span>
+                                    </label>
+                                    <input type="range" id="slider-sat" min="10" max="100" value="70" class="w-full accent-indigo-500 cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 text-center italic">
+                            *Gunakan kontrol di atas untuk melihat bagaimana warna dan bayangan berinteraksi.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PAGE 4: MATERI KRITIK ==================== -->
+        <section id="page-materi-kritik" class="fade-in hidden space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                <div class="border-b border-slate-100 pb-4 mb-6">
+                    <span class="text-xs font-bold text-amber-600 uppercase tracking-widest">Bab 2 - Tahapan Analisis</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-serif">Kritik Seni Rupa</h2>
+                </div>
+
+                <div class="space-y-6 text-slate-600 text-sm sm:text-base leading-relaxed">
+                    <p>Kritik seni rupa adalah kegiatan menanggapi karya seni untuk menunjukkan kelebihan dan kekurangan suatu karya secara objektif. Kritik seni berfungsi menjembatani pemahaman antara seniman, karya, dan penikmat seni.</p>
+
+                    <h3 class="text-xl font-bold text-slate-900 font-serif mb-4">4 Langkah Utama Kritik Seni Rupa (Feldman):</h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold inline-flex items-center justify-center text-sm mb-3">1</span>
+                            <h4 class="font-bold text-slate-900 text-base mb-1">Deskripsi</h4>
+                            <p class="text-xs text-slate-600">Tahap mencatat dan mendata semua fakta visual yang terlihat pada karya secara objektif tanpa memberi kesimpulan pribadi.</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold inline-flex items-center justify-center text-sm mb-3">2</span>
+                            <h4 class="font-bold text-slate-900 text-base mb-1">Analisis Formal</h4>
+                            <p class="text-xs text-slate-600">Menjelaskan bagaimana unsur-unsur visual disusun menggunakan prinsip-prinsip desain (keseimbangan, irama, penekanan, kesatuan).</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold inline-flex items-center justify-center text-sm mb-3">3</span>
+                            <h4 class="font-bold text-slate-900 text-base mb-1">Interpretasi</h4>
+                            <p class="text-xs text-slate-600">Menganalisis makna, simbol, pesan, atau gagasan yang ingin disampaikan oleh seniman melalui karya tersebut.</p>
+                        </div>
+
+                        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+                            <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold inline-flex items-center justify-center text-sm mb-3">4</span>
+                            <h4 class="font-bold text-slate-900 text-base mb-1">Evaluasi / Penilaian</h4>
+                            <p class="text-xs text-slate-600">Menentukan tingkat kualitas karya secara keseluruhan berdasarkan kriteria umum dan membandingkannya dengan karya sejenis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PAGE 5: STUDIO LUKIS INTERAKTIF ==================== -->
+        <section id="page-materi-studio" class="fade-in hidden space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div class="border-b border-slate-100 pb-4 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 font-serif">Studio Praktik Seni Rupa</h2>
+                        <p class="text-slate-500 text-xs">Uji coba interaktif membuat garis, bentuk, dan komposisi warna karya 2D</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="clearStudioCanvas()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-lg transition-all border border-rose-200">
+                            <i class="fa-solid fa-trash mr-1"></i> Bersihkan Kanvas
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Canvas Painter Tools -->
+                <div class="flex flex-wrap items-center gap-4 bg-slate-100 p-3 rounded-xl mb-4 border border-slate-200 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-700">Warna Kuas:</span>
+                        <input type="color" id="studio-color" value="#4338CA" class="w-8 h-8 rounded cursor-pointer border-none">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-700">Ukuran Kuas:</span>
+                        <input type="range" id="studio-size" min="2" max="30" value="6" class="w-28 accent-indigo-600 cursor-pointer">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-700">Jenis Efek:</span>
+                        <select id="studio-tool" class="px-2 py-1 bg-white rounded border border-slate-300 font-medium outline-none">
+                            <option value="brush">Kuas Standar</option>
+                            <option value="neon">Efek Neon / Glowing</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Paint Canvas Window -->
+                <div class="w-full bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-inner">
+                    <canvas id="canvas-studio" class="w-full h-[400px] cursor-crosshair block bg-slate-950"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PAGE 6: KUIS INTERAKTIF ==================== -->
+        <section id="page-kuis" class="fade-in hidden space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                <div class="border-b border-slate-100 pb-4 mb-6 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest">Uji Pemahaman</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 font-serif">Kuis Seni Rupa Kelas X</h2>
+                    </div>
+                    <div class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200">
+                        5 Soal Pilihan Ganda
+                    </div>
+                </div>
+
+                <form id="quiz-form" onsubmit="submitQuiz(event)" class="space-y-8">
+                    <div id="quiz-container" class="space-y-6">
+                        <!-- Questions will be dynamically loaded via JS -->
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex justify-end">
+                        <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 transition-all active:scale-95">
+                            Kirim & Lihat Nilai <i class="fa-solid fa-check-double ml-2"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Quiz Result Modal/Box -->
+                <div id="quiz-result" class="hidden mt-6 p-6 rounded-2xl bg-indigo-50 border border-indigo-200 text-center space-y-4">
+                    <div class="w-16 h-16 rounded-full bg-indigo-600 text-white font-bold text-2xl flex items-center justify-center mx-auto shadow-md">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">Hasil Kuis Selesai!</h3>
+                        <p class="text-slate-600 text-sm">Nilai kamu telah tersimpan secara otomatis dalam sistem.</p>
+                    </div>
+                    <div class="text-4xl font-extrabold text-indigo-600 font-serif" id="quiz-score-text">0 / 100</div>
+                    <div>
+                        <button onclick="navigateTo('dashboard')" class="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700 transition-all">
+                            Kembali ke Menu Utama
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PAGE 7: REKAP NILAI (GURU) ==================== -->
+        <section id="page-rekap-nilai" class="fade-in hidden space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                <div class="border-b border-slate-100 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Panel Guru</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 font-serif">Daftar Rekap Nilai Kuis Siswa</h2>
+                    </div>
+                    <button onclick="clearAllScores()" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-xl border border-rose-200 transition-all flex items-center gap-2 self-start">
+                        <i class="fa-solid fa-arrows-rotate"></i> Reset Semua Data Nilai
+                    </button>
+                </div>
+
+                <!-- Table Scores -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="p-4">No</th>
+                                <th class="p-4">Nama Siswa</th>
+                                <th class="p-4">Kelas</th>
+                                <th class="p-4">Tanggal Pengerjaan</th>
+                                <th class="p-4 text-center">Nilai Final</th>
+                                <th class="p-4 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scores-table-body" class="divide-y divide-slate-100">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>© 2026 Media Pembelajaran Apresiasi & Kritik Seni Rupa Kelas X SMA</p>
+            <p class="mt-1 text-slate-400">Dirancang secara interaktif untuk mendukung Kurikulum Merdeka.</p>
+        </div>
+    </footer>
+
+    <script>
+        // State Application Global
+        let currentRole = 'siswa';
+        let currentUser = null;
+        let activePage = 'login';
+
+        // Quiz Question Dataset
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "Kegiatan menilai, menghargai, dan memahami makna estetis dalam karya seni rupa disebut...",
+                options: ["Eksplorasi Seni", "Apresiasi Seni", "Kritik Seni", "Kreasi Seni"],
+                answer: 1
+            },
+            {
+                id: 2,
+                question: "Tingkat apresiasi yang berfokus pada tangkapan indrawi dan perasaan secara langsung dinamakan apresiasi...",
+                options: ["Apresiasi Estetis", "Apresiasi Kritis", "Apresiasi Empatik", "Apresiasi Formal"],
+                answer: 2
+            },
+            {
+                id: 3,
+                question: "Tahapan pertama dalam metode kritik seni rupa menurut Feldman adalah...",
+                options: ["Analisis Formal", "Deskripsi", "Interpretasi", "Evaluasi"],
+                answer: 1
+            },
+            {
+                id: 4,
+                question: "Pada tahapan kritik manakah seorang kritikus menjelaskan makna, pesan simbolis, atau gagasan dibalik karya?",
+                options: ["Deskripsi", "Analisis Formal", "Interpretasi", "Evaluasi"],
+                answer: 2
+            },
+            {
+                id: 5,
+                question: "Berikut ini yang merupakan unsur fisik dasar dalam karya seni rupa, KECUALI...",
+                options: ["Garis dan Bidang", "Warna dan Gelap-Terang", "Tekstur dan Ruang", "Metode Kritik"],
+                answer: 3
+            }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDefaultScores();
+            renderQuizQuestions();
+            setupStudioCanvas();
+            initApresiasiCanvas();
+        });
+
+        // Initialize mock student data in LocalStorage if empty
+        function initDefaultScores() {
+            const existingScores = localStorage.getItem('art_edu_scores');
+            if (!existingScores) {
+                const defaultScores = [
+                    { name: 'Siswa 10 (Sesi Ini)', class: 'X-Seni 1', date: '2026-10-22 09:15', score: 80, status: 'Tuntas' },
+                    { name: 'Andi Pratama', class: 'X-Seni 1', date: '2026-10-21 10:30', score: 100, status: 'Sangat Baik' },
+                    { name: 'Siti Rahma', class: 'X-Seni 2', date: '2026-10-21 11:00', score: 60, status: 'Perlu Remedial' }
+                ];
+                localStorage.setItem('art_edu_scores', JSON.stringify(defaultScores));
+            }
+        }
+
+        // Role Switch Switcher
+        function setRole(role) {
+            currentRole = role;
+            const btnSiswa = document.getElementById('role-btn-siswa');
+            const btnGuru = document.getElementById('role-btn-guru');
+
+            if (role === 'siswa') {
+                btnSiswa.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all text-slate-700 bg-white shadow-sm";
+                btnGuru.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all text-slate-500 hover:text-slate-700";
+            } else {
+                btnGuru.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all text-slate-700 bg-white shadow-sm";
+                btnSiswa.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all text-slate-500 hover:text-slate-700";
+            }
+        }
+
+        // Login Authenticator
+        function handleLogin(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('login-username').value.trim();
+            const passwordInput = document.getElementById('login-password').value.trim();
+            const errorBox = document.getElementById('login-error');
+
+            if (currentRole === 'siswa') {
+                if (usernameInput === 'siswa10' && passwordInput === '123') {
+                    currentUser = { name: 'Siswa Kelas X', role: 'Siswa' };
+                    loginSuccess();
+                } else {
+                    errorBox.classList.remove('hidden');
+                }
+            } else if (currentRole === 'guru') {
+                if (usernameInput === 'guru10' && passwordInput === '321') {
+                    currentUser = { name: 'Bapak/Ibu Guru Seni', role: 'Guru' };
+                    loginSuccess();
+                } else {
+                    errorBox.classList.remove('hidden');
+                }
+            }
+        }
+
+        function loginSuccess() {
+            document.getElementById('login-error').classList.add('hidden');
+            document.getElementById('main-header').classList.remove('hidden');
+            document.getElementById('user-display-name').textContent = currentUser.name;
+            document.getElementById('user-role-badge').textContent = currentUser.role;
+
+            // Show or hide teacher-specific elements
+            const cardMenuGuru = document.getElementById('card-menu-guru');
+            if (currentUser.role === 'Guru') {
+                cardMenuGuru.classList.remove('hidden');
+            } else {
+                cardMenuGuru.classList.add('hidden');
+            }
+
+            navigateTo('dashboard');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('main-header').classList.add('hidden');
+            navigateTo('login');
+        }
+
+        function navigateTo(pageId) {
+            activePage = pageId;
+
+            // List of all sub-pages
+            const pages = ['login', 'dashboard', 'materi-apresiasi', 'materi-kritik', 'materi-studio', 'kuis', 'rekap-nilai'];
+            
+            pages.forEach(p => {
+                const el = document.getElementById(`page-${p}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) targetPage.classList.remove('hidden');
+
+            // Handle Header & Nav Visibility
+            const subpageNav = document.getElementById('subpage-nav');
+            const subpageTitle = document.getElementById('subpage-title');
+
+            if (pageId === 'login') {
+                document.getElementById('main-header').classList.add('hidden');
+                subpageNav.classList.add('hidden');
+            } else if (pageId === 'dashboard') {
+                subpageNav.classList.add('hidden');
+            } else {
+                subpageNav.classList.remove('hidden');
+                // Format Title
+                const titles = {
+                    'materi-apresiasi': 'Materi 1: Apresiasi Seni Rupa',
+                    'materi-kritik': 'Materi 2: Kritik Seni Rupa',
+                    'materi-studio': 'Studio Lukis Interaktif',
+                    'kuis': 'Kuis & Evaluasi',
+                    'rekap-nilai': 'Rekapitulasi Nilai Siswa'
+                };
+                subpageTitle.textContent = titles[pageId] || 'Modul Pembelajaran';
+            }
+
+            if (pageId === 'rekap-nilai') {
+                renderScoresTable();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function initApresiasiCanvas() {
+            const canvas = document.getElementById('canvas-apresiasi');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const sliderLight = document.getElementById('slider-light');
+            const sliderSat = document.getElementById('slider-sat');
+            const valLight = document.getElementById('val-light');
+            const valSat = document.getElementById('val-sat');
+
+            function draw() {
+                const lightVal = parseInt(sliderLight.value);
+                const satVal = parseInt(sliderSat.value);
+
+                valLight.textContent = lightVal + '%';
+                valSat.textContent = satVal + '%';
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Background gradient
+                const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                bgGrad.addColorStop(0, '#0F172A');
+                bgGrad.addColorStop(1, '#1E293B');
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw Artwork Shape (3D Vase/Sphere Simulation)
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2 + 10;
+                const radius = 55;
+
+                // Light Position Offset
+                const lightX = centerX + (lightVal - 50) * 1.5;
+                const lightY = centerY - 30;
+
+                const radGrad = ctx.createRadialGradient(
+                    lightX, lightY, 5,
+                    centerX, centerY, radius + 20
+                );
+
+                radGrad.addColorStop(0, `hsl(38, ${satVal}%, ${Math.min(lightVal + 20, 95)}%)`);
+                radGrad.addColorStop(0.6, `hsl(243, ${satVal}%, ${Math.max(lightVal - 20, 20)}%)`);
+                radGrad.addColorStop(1, '#090D16');
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fillStyle = radGrad;
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = `hsl(38, ${satVal}%, 60%)`;
+                ctx.stroke();
+
+                // Highlight Effect
+                ctx.beginPath();
+                ctx.arc(lightX, lightY, 8, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${lightVal / 120})`;
+                ctx.fill();
+            }
+
+            sliderLight.addEventListener('input', draw);
+            sliderSat.addEventListener('input', draw);
+            draw();
+        }
+
+        let isDrawing = false;
+        function setupStudioCanvas() {
+            const canvas = document.getElementById('canvas-studio');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            // Set internal resolution
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 400;
+
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
+
+            function startDraw(e) {
+                isDrawing = true;
+                const pos = getPos(e);
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                const pos = getPos(e);
+                const color = document.getElementById('studio-color').value;
+                const size = document.getElementById('studio-size').value;
+                const tool = document.getElementById('studio-tool').value;
+
+                ctx.lineWidth = size;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                if (tool === 'neon') {
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = color;
+                    ctx.strokeStyle = '#FFFFFF';
+                } else {
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = color;
+                }
+
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            }
+
+            function stopDraw() {
+                isDrawing = false;
+                ctx.beginPath();
+            }
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('mouseleave', stopDraw);
+
+            canvas.addEventListener('touchstart', startDraw);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDraw);
+        }
+
+        function clearStudioCanvas() {
+            const canvas = document.getElementById('canvas-studio');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function renderQuizQuestions() {
+            const container = document.getElementById('quiz-container');
+            if (!container) return;
+
+            container.innerHTML = quizQuestions.map((q, idx) => `
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                    <p class="font-bold text-slate-800 text-sm sm:text-base">
+                        <span class="text-indigo-600 font-serif mr-1">${idx + 1}.</span> ${q.question}
+                    </p>
+                    <div class="space-y-2 pl-4">
+                        ${q.options.map((opt, oIdx) => `
+                            <label class="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-slate-200 hover:border-indigo-300 cursor-pointer text-xs sm:text-sm transition-all">
+                                <input type="radio" name="q_${q.id}" value="${oIdx}" required class="accent-indigo-600 w-4 h-4">
+                                <span class="text-slate-700">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Submit Quiz & Grade Logic
+        function submitQuiz(e) {
+            e.preventDefault();
+            let score = 0;
+
+            quizQuestions.forEach(q => {
+                const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+                if (selected && parseInt(selected.value) === q.answer) {
+                    score += 20; // 5 Questions * 20 = 100
+                }
+            });
+
+            // Save score to LocalStorage
+            const currentScores = JSON.parse(localStorage.getItem('art_edu_scores') || '[]');
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0] + ' ' + now.toTimeString().substring(0, 5);
+
+            let statusStr = 'Tuntas';
+            if (score >= 90) statusStr = 'Sangat Baik';
+            else if (score < 70) statusStr = 'Perlu Remedial';
+
+            currentScores.unshift({
+                name: currentUser ? currentUser.name : 'Siswa 10',
+                class: 'X-Seni 1',
+                date: dateStr,
+                score: score,
+                status: statusStr
+            });
+
+            localStorage.setItem('art_edu_scores', JSON.stringify(currentScores));
+
+            // Display Results UI
+            document.getElementById('quiz-form').classList.add('hidden');
+            const resultBox = document.getElementById('quiz-result');
+            resultBox.classList.remove('hidden');
+            document.getElementById('quiz-score-text').textContent = `${score} / 100`;
+        }
+
+        function renderScoresTable() {
+            const tbody = document.getElementById('scores-table-body');
+            if (!tbody) return;
+
+            const scores = JSON.parse(localStorage.getItem('art_edu_scores') || '[]');
+
+            if (scores.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-6 text-center text-slate-400 italic text-xs">Belum ada data nilai kuis tersimpan.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = scores.map((item, idx) => {
+                let badgeClass = "bg-emerald-100 text-emerald-700 border-emerald-300";
+                if (item.score < 70) badgeClass = "bg-rose-100 text-rose-700 border-rose-300";
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-4 font-bold text-slate-400">${idx + 1}</td>
+                        <td class="p-4 font-semibold text-slate-800">${item.name}</td>
+                        <td class="p-4 text-xs text-slate-500">${item.class}</td>
+                        <td class="p-4 text-xs font-mono text-slate-500">${item.date}</td>
+                        <td class="p-4 text-center font-bold font-serif text-slate-900 text-base">${item.score}</td>
+                        <td class="p-4 text-center">
+                            <span class="inline-block px-2.5 py-0.5 text-[11px] font-bold rounded-full border ${badgeClass}">
+                                ${item.status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Reset All Scores Data
+        function clearAllScores() {
+            if (confirm("Apakah Bapak/Ibu Yakin ingin menghapus seluruh rekap data nilai siswa?")) {
+                localStorage.removeItem('art_edu_scores');
+                renderScoresTable();
+            }
+        }
+    </script>
+</body>
+</html>
